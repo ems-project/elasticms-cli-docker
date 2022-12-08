@@ -29,8 +29,8 @@ bats test/tests.bats
 
 # Usage
 
-## [elasticms-client](https://github.com/ems-project/elasticms-client)
+## [elasticms-client](https://github.com/ems-project/elasticms-cli)
 
 ```
-docker run -it --rm docker.io/elasticms/client:latest elasticms <command>
+docker run -it --rm docker.io/elasticms/cli:latest elasticms <command>
 ```

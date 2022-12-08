@@ -28,9 +28,9 @@ ENV NODE_ENV production
 LABEL eu.elasticms.client.build-date=$BUILD_DATE_ARG \
       eu.elasticms.client.name="elasticms-cli" \
       eu.elasticms.client.description="Command client of the ElasticMS suite." \
-      eu.elasticms.client.url="https://hub.docker.com/repository/docker/elasticms/client" \
+      eu.elasticms.client.url="https://hub.docker.com/repository/docker/elasticms/cli" \
       eu.elasticms.client.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.client.vcs-url="https://github.com/ems-project/elasticms-client-docker" \
+      eu.elasticms.client.vcs-url="https://github.com/ems-project/elasticms-cli-docker" \
       eu.elasticms.client.vendor="sebastian.molle@gmail.com" \
       eu.elasticms.client.version="$VERSION_ARG" \
       eu.elasticms.client.release="$RELEASE_ARG" \
