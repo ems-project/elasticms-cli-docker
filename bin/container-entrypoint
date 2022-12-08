@@ -2,4 +2,4 @@
 
 set -eu
 cmd="$1"; shift
-exec $cmd "$@"
+exec elasticms $cmd "$@"
