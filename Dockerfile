@@ -1,4 +1,4 @@
-FROM docker.io/elasticms/base-php-cli-dev:7.4 as builder
+FROM docker.io/elasticms/base-php-cli-dev:8.1 as builder
 
 ARG VERSION_ARG
 ARG RELEASE_ARG
@@ -16,7 +16,7 @@ RUN echo "Download and build elasticms-client ..." \
     && curl -sSfL ${ELASTICMS_CLIENT_DOWNLOAD_URL} | tar -xzC /opt/src/elasticms --strip-components=1 \
     && COMPOSER_MEMORY_LIMIT=-1 composer -vvvv install --no-interaction --no-suggest --no-scripts --working-dir /opt/src/elasticms -o 
 
-FROM docker.io/elasticms/base-php-cli:7.4
+FROM docker.io/elasticms/base-php-cli:8.1
 
 ARG VERSION_ARG
 ARG RELEASE_ARG
