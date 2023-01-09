@@ -7,7 +7,7 @@ ARG VCS_REF_ARG
 
 USER 1001
 
-ENV ELASTICMS_CLIENT_VERSION=${VERSION_ARG:-0.0.1} 
+ENV ELASTICMS_CLIENT_VERSION=${VERSION_ARG:-5.1.2} 
 ENV ELASTICMS_CLIENT_DOWNLOAD_URL="https://github.com/ems-project/elasticms-cli/archive/refs/tags/${ELASTICMS_CLIENT_VERSION}.tar.gz" 
 
 RUN echo "Download and build elasticms-client ..." \
