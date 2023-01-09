@@ -98,23 +98,6 @@ jobs:
           labels: ${{ steps.meta-dev.outputs.labels }}
           outputs: type=docker,dest=/tmp/myimage-dev.tar
 
-      - name: Squash Docker Image
-        id: squash
-        run: |
-          pip install docker-squash
-          cat /tmp/myimage.tar | docker load
-          cat /tmp/myimage-dev.tar | docker load
-          docker-squash --verbose --message "Build and Squashed in GitHub Action" \
-            --tag ${{ steps.prep.outputs.docker-image-name }}:rc \
-            --output-path /tmp/myimage.tar \
-            ${{ steps.prep.outputs.docker-image-name }}:rc
-          docker-squash --verbose --message "Build and Squashed in GitHub Action" \
-            --tag ${{ steps.prep.outputs.docker-image-name-dev }}:rc \
-            --output-path /tmp/myimage-dev.tar \
-            ${{ steps.prep.outputs.docker-image-name-dev }}:rc
-          cat /tmp/myimage.tar | docker load
-          cat /tmp/myimage-dev.tar | docker load
-
       - name: Check Docker Image
         run: |
           docker image inspect ${{ steps.prep.outputs.docker-image-name }}:rc
