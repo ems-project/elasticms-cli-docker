@@ -47,7 +47,7 @@ RUN echo "Install required runtime ..." \
     && chmod +x /usr/local/bin/container-entrypoint \
                 /usr/local/bin/elasticms 
 
-WORKDIR /home/default
+WORKDIR /opt/src/elasticms
 
 USER 1001
 
