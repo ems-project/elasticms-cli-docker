@@ -14,7 +14,8 @@ RUN echo "Download and build elasticms-client ..." \
     && mkdir -p /opt/src/elasticms \
     && cd /opt/src/elasticms \
     && curl -sSfL ${ELASTICMS_CLIENT_DOWNLOAD_URL} | tar -xzC /opt/src/elasticms --strip-components=1 \
-    && COMPOSER_MEMORY_LIMIT=-1 composer -vvvv install --no-interaction --no-suggest --no-scripts --working-dir /opt/src/elasticms -o 
+    && COMPOSER_MEMORY_LIMIT=-1 composer -vvvv install --no-interaction --no-suggest --no-scripts --working-dir /opt/src/elasticms -o \
+    && npm install --prefix /opt/src/elasticms /opt/src/elasticms
 
 FROM docker.io/elasticms/base-php:8.1-cli
 
