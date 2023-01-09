@@ -24,7 +24,9 @@ ARG RELEASE_ARG
 ARG BUILD_DATE_ARG
 ARG VCS_REF_ARG
 
-ENV NODE_ENV production
+ENV NODE_ENV=production \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 LABEL eu.elasticms.client.build-date=$BUILD_DATE_ARG \
       eu.elasticms.client.name="elasticms-cli" \
@@ -44,7 +46,17 @@ COPY --chmod=775 --chown=1001:0  bin/ /usr/local/bin/
 
 RUN echo "Install required runtime ..." \
     && apk add --update --no-cache tini \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont  \
     && echo "Configure container ..." \
+    && mkdir -p /home/default/Downloads /app \
+    && chown -R 1001:0 /opt/src/elasticms /home/default/Downloads /app \
+    && chmod -R ug+rw /opt/src/elasticms /home/default/Downloads /app \
+    && find /opt/src/elasticms -type d -exec chmod ug+x {} \; \
     && chmod +x /usr/local/bin/container-entrypoint \
                 /usr/local/bin/elasticms 
 
