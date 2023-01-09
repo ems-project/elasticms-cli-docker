@@ -73,7 +73,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=docker,dest=/tmp/image.tar
 
-      - name: Check Docker Images
+      - name: Load Docker Image
+        run: |
+          docker load --input /tmp/image.tar
+
+      - name: Check Docker Image
         run: |
           docker image inspect ${{ steps.prep.outputs.docker-image-name }}:rc-${{ matrix.image-variant }}
           docker history ${{ steps.prep.outputs.docker-image-name }}:rc-${{ matrix.image-variant }}
