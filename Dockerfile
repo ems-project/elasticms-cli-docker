@@ -28,16 +28,18 @@ ENV NODE_ENV=production \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-LABEL eu.elasticms.client.build-date=$BUILD_DATE_ARG \
-      eu.elasticms.client.name="elasticms-cli" \
-      eu.elasticms.client.description="Command client of the ElasticMS suite." \
-      eu.elasticms.client.url="https://hub.docker.com/repository/docker/elasticms/cli" \
-      eu.elasticms.client.vcs-ref=$VCS_REF_ARG \
-      eu.elasticms.client.vcs-url="https://github.com/ems-project/elasticms-cli-docker" \
-      eu.elasticms.client.vendor="sebastian.molle@gmail.com" \
-      eu.elasticms.client.version="$VERSION_ARG" \
-      eu.elasticms.client.release="$RELEASE_ARG" \
-      eu.elasticms.client.schema-version="1.0" 
+LABEL be.fgov.elasticms.client.build-date=$BUILD_DATE_ARG \
+      be.fgov.elasticms.client.name="elasticms-cli" \
+      be.fgov.elasticms.client.description="Command client of the ElasticMS suite." \
+      be.fgov.elasticms.client.url="https://hub.docker.com/repository/docker/elasticms/cli" \
+      be.fgov.elasticms.client.vcs-ref=$VCS_REF_ARG \
+      be.fgov.elasticms.client.vcs-url="https://github.com/ems-project/elasticms-cli-docker" \
+      be.fgov.elasticms.client.vendor="sebastian.molle@gmail.com" \
+      be.fgov.elasticms.client.version="$VERSION_ARG" \
+      be.fgov.elasticms.client.release="$RELEASE_ARG" \
+      be.fgov.elasticms.client.environment="prd" \
+      be.fgov.elasticms.client.schema-version="1.0" 
+
 
 USER root
 
