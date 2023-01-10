@@ -34,7 +34,7 @@ build-all: # Build [elasticms-cli] [prd,dev] variant Docker images
 	@$(MAKE) -s _build-dev
 
 _build-%: 
-	@$(MAKE) _builder \
+	@$(MAKE) -s _builder \
 		-e _BUILD_ARGS_TAG="${ELASTICMS_CLI_VERSION}-$*" \
 		-e _BUILD_ARGS_TARGET="$*"
 
@@ -48,17 +48,17 @@ _builder:
 		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
 
 test: # Test [elasticms-cli] [prd] variant Docker images
-	@$(MAKE) _tester-prd
+	@$(MAKE) -s _tester-prd
 
 test-dev: # Test [elasticms-cli] [dev] variant Docker images
-	@$(MAKE) _tester-dev
+	@$(MAKE) -s _tester-dev
 
 test-all: # Test [elasticms-cli] [prd,dev] variant Docker images
-	@$(MAKE) _tester-prd
-	@$(MAKE) _tester-dev
+	@$(MAKE) -s _tester-prd
+	@$(MAKE) -s _tester-dev
 
 _tester-%: 
-	@$(MAKE) _tester \
+	@$(MAKE) -s _tester \
 		-e DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}:${ELASTICMS_CLI_VERSION}-$*"
 
 _tester:
