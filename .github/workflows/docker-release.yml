@@ -326,10 +326,10 @@ jobs:
           private-key: ${{ secrets.DOCKER_PRIVATE_KEY }}
           private-key-passphrase: ${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}
 
-      - name: Sign and push docker image "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-patch }}"
+      - name: Sign and push docker image "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-minor }}"
         uses: sudo-bot/action-docker-sign@latest
         with:
-          image-ref: "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-patch }}"
+          image-ref: "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-minor }}"
           private-key-id: "${{ secrets.DOCKER_PRIVATE_KEY_ID }}"
           private-key: ${{ secrets.DOCKER_PRIVATE_KEY }}
           private-key-passphrase: ${{ secrets.DOCKER_PRIVATE_KEY_PASSPHRASE }}
@@ -358,6 +358,8 @@ jobs:
           docker pull ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-patch }}
           docker pull ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-minor }}-${{ matrix.image-variant }}
           docker pull ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-minor }}
+          docker pull ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-major }}-${{ matrix.image-variant }}
+          docker pull ${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.version-major }}
 
   cleanup:
 
