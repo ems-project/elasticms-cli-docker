@@ -1,5 +1,9 @@
 #!/bin/bash
-
 set -eu
-cmd="$1"; shift
-exec elasticms $cmd "$@"
+
+# first arg is a symfony cmd (fe. `ems:version`)
+if [[ $1 =~ ^([A-z0-9\-]+:){1,}([A-z0-9\-]+)$ ]]; then
+	set -- elasticms "$@"
+fi
+
+exec "$@"
