@@ -32,6 +32,10 @@ jobs:
         run: |
           echo "docker-image-name=${DOCKER_IMAGE_NAME}" >> $GITHUB_OUTPUT
           echo "build-date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+          echo "github-ci-sha=${CI_SHA}" >> $GITHUB_OUTPUT
+          echo "github-ci-run-id=${CI_RUN_ID}" >> $GITHUB_OUTPUT
+          echo "tika-version=${TIKA_VERSION}" >> $GITHUB_OUTPUT
+          echo "elasticms-cli-version=${ELASTICMS_CLI_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Fill "${{ steps.prep.outputs.docker-image-name }}" Docker Image metadata
         id: meta
@@ -67,10 +71,11 @@ jobs:
           file: Dockerfile
           target: ${{ matrix.image-variant }}
           build-args: |
-            VERSION_ARG=${{ env.ELASTICMS_CLI_VERSION }}
-            RELEASE_ARG=${{ env.CI_RUN_ID }}
-            VCS_REF_ARG=${{ env.CI_SHA }}
+            VERSION_ARG=${{ steps.prep.outputs.elasticms-cli-version }}
+            RELEASE_ARG=${{ steps.prep.outputs.github-ci-run-id }}
+            VCS_REF_ARG=${{ steps.prep.outputs.github-ci-sha }}
             BUILD_DATE_ARG=${{ steps.prep.outputs.build-date }}
+            TIKA_VERSION_ARG=${{ steps.prep.outputs.tika-version }}
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}

@@ -14,6 +14,9 @@ BUILD_DATE ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 # Default ElasticMS CLI version (if no .build.env file provided)
 ELASTICMS_CLI_VERSION ?= 5.0.0
 
+# Default Tika App version (if no .build.env file provided)
+TIKA_VERSION ?= 2.7.0
+
 # Default Docker image name (if no .build.env file provided)
 DOCKER_IMAGE_NAME ?= docker.io/elasticms/cli
 
@@ -62,6 +65,7 @@ _builder: _dockerfile
 		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
 		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
 		--build-arg VCS_REF_ARG="${GIT_HASH}" \
+		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
 		--target ${_BUILD_ARGS_TARGET} \
 		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
 
@@ -71,6 +75,7 @@ _buildaher: _dockerfile
 		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
 		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
 		--build-arg VCS_REF_ARG="${GIT_HASH}" \
+		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
 		--target ${_BUILD_ARGS_TARGET} \
 		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
 
