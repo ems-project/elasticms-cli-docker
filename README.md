@@ -5,7 +5,7 @@ Some schedulers like Kubernetes or Openshift give the possibility to run tasks a
 
 ## Prerequisite
 
-You must install `bats`, `make`.
+You must install `bats`, `make`, `m4`.
 
 # Build
 
