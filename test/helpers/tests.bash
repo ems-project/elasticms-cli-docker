@@ -35,6 +35,18 @@ function curl_container {
 		http://$(docker_ip $container)${path}
 }
 
+function curl_podman_container {
+  local -r container=$1
+  local -r path=$2
+  shift 2
+  podman run --rm --net=docker_default --label bats-type="curl" docker.io/appropriate/curl --silent \
+    --connect-timeout 5 \
+    --max-time 20 \
+    --retry 4 --retry-delay 5 \
+    "$@" \
+    http://$(podman_ip $container)${path}
+}
+
 # Retry a command $1 times until it succeeds. Wait $2 seconds between retries.
 function retry {
     local attempts=$1

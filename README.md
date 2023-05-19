@@ -5,21 +5,23 @@ Some schedulers like Kubernetes or Openshift give the possibility to run tasks a
 
 ## Prerequisite
 
-You must install `bats`, `make`.
+You must install `bats`, `make`, `m4`.
 
 # Build
 
 ```sh
-make build[-dev|-all] ELASTICMS_CLI_VERSION=<ElasticMS CLI Version you want to build> [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ]
+make build[-dev|-all] ELASTICMS_CLI_VERSION=<ElasticMS CLI version you want to build> \
+                      [ TIKA_VERSION=<Tika version you want to include> ] \
+                      [ DOCKER_IMAGE_NAME=<ElasticMS Web Docker Image Name you want to build> ] \
 ```
 
 ## Example building __prd__ Docker image
 
 ```sh
-make build ELASTICMS_CLI_VERSION=5.1.2
+make build ELASTICMS_CLI_VERSION=5.2.0 TIKA_VERSION=2.6.0
 ```
 
-__Provide docker image__ : `docker.io/elasticms/cli:5.1.2-prd`
+__Provide docker image__ : `docker.io/elasticms/cli:5.1.2-prd` with ElasticMS Client Version v5.2.0 and Tika App Version v2.6.0
 
 ## Example building __dev__ Docker image
 

@@ -22,7 +22,7 @@ jobs:
       github-ci-run-id: ${{ steps.prep.outputs.github-ci-run-id }}
       github-ci-sha-short: ${{ steps.prep.outputs.github-ci-sha-short }}
       github-ci-sha: ${{ steps.prep.outputs.github-ci-sha }}
-      aws-cli-version: ${{ steps.prep.outputs.aws-cli-version }}
+      tika-version: ${{ steps.prep.outputs.tika-version }}
 
     steps:
       - uses: actions/checkout@v3
@@ -49,6 +49,7 @@ jobs:
           echo "github-ci-sha-short=${CI_SHA_SHORT}" >> $GITHUB_OUTPUT
           echo "github-ci-sha=${CI_SHA}" >> $GITHUB_OUTPUT
           echo "github-ci-run-id=${CI_RUN_ID}" >> $GITHUB_OUTPUT
+          echo "tika-version=${TIKA_VERSION}" >> $GITHUB_OUTPUT
   build:
 
     strategy:
@@ -84,6 +85,10 @@ jobs:
             type=raw,value=${{ needs.init.outputs.version-minor }}-${{ matrix.image-variant }}
             type=raw,value=${{ needs.init.outputs.version-major }}-${{ matrix.image-variant }}
 
+      - name: Create Dockerfile
+        run: |
+          make Dockerfile
+
       - name: Build "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}" Docker Image
         id: build
         uses: docker/build-push-action@v3
@@ -97,6 +102,7 @@ jobs:
             RELEASE_ARG=${{ needs.init.outputs.github-ci-run-id }}
             VCS_REF_ARG=${{ needs.init.outputs.github-ci-sha }}
             BUILD_DATE_ARG=${{ needs.init.outputs.build-date }}
+            TIKA_VERSION_ARG=${{ needs.init.outputs.tika-version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=docker,dest=/tmp/builded.tar

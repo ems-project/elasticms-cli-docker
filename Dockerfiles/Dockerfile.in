@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1.3
+FROM docker.io/elasticms/base-php:8.1-cli-dev as builder
+
+include(Args.m4)
+
+include(Builder.m4)
+
+FROM docker.io/elasticms/base-php:8.1-cli as prd
+
+include(Args.m4)
+
+ENV NODE_ENV=production
+
+include(Common.m4)
+
+LABEL be.fgov.elasticms.client.environment="prd"
+
+FROM docker.io/elasticms/base-php:8.1-cli-dev as dev
+
+include(Args.m4)
+
+ENV NODE_ENV=development
+
+include(Common.m4)
+
+LABEL be.fgov.elasticms.client.environment="dev"

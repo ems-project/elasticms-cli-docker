@@ -5,11 +5,17 @@ ifneq (,$(wildcard ./.build.env))
     export
 endif
 
+LIB = ./Dockerfiles
+DOCKERFILE=Dockerfile.in
+
 GIT_HASH ?= $(shell git log --format="%h" -n 1)
 BUILD_DATE ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 # Default ElasticMS CLI version (if no .build.env file provided)
 ELASTICMS_CLI_VERSION ?= 5.0.0
+
+# Default Tika App version (if no .build.env file provided)
+TIKA_VERSION ?= 2.7.0
 
 # Default Docker image name (if no .build.env file provided)
 DOCKER_IMAGE_NAME ?= docker.io/elasticms/cli
@@ -18,7 +24,7 @@ _BUILD_ARGS_TARGET ?= prd
 _BUILD_ARGS_TAG ?= latest
 
 .DEFAULT_GOAL := help
-.PHONY: help build build-dev build-all test test-dev test-all
+.PHONY: help build build-dev build-all buildah buildah-dev buildah-all test test-dev test-all Dockerfile
 
 help: # Show help for each of the Makefile recipes.
 	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
@@ -33,17 +39,43 @@ build-all: # Build [elasticms-cli] [prd,dev] variant Docker images
 	@$(MAKE) -s _build-prd
 	@$(MAKE) -s _build-dev
 
+buildah: # Build [elasticms-cli] [prd] variant Docker images
+	@$(MAKE) -s _buildah-prd
+
+buildah-dev: # Build [elasticms-cli] [dev] variant Docker images
+	@$(MAKE) -s _buildah-dev
+
+buildah-all: # Build [elasticms-cli] [prd,dev] variant Docker images
+	@$(MAKE) -s _buildah-prd
+	@$(MAKE) -s _buildah-dev
+
 _build-%: 
 	@$(MAKE) -s _builder \
 		-e _BUILD_ARGS_TAG="${ELASTICMS_CLI_VERSION}-$*" \
 		-e _BUILD_ARGS_TARGET="$*"
 
-_builder:
-	@docker build \
+_buildah-%: 
+	@$(MAKE) -s _buildaher \
+		-e _BUILD_ARGS_TAG="${ELASTICMS_CLI_VERSION}-$*" \
+		-e _BUILD_ARGS_TARGET="$*"
+
+_builder: _dockerfile
+	@docker build --progress=plain --no-cache \
 		--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
 		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
 		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
 		--build-arg VCS_REF_ARG="${GIT_HASH}" \
+		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
+		--target ${_BUILD_ARGS_TARGET} \
+		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
+
+_buildaher: _dockerfile
+	@buildah bud --no-cache --pull-always --force-rm --squash \
+		--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
+		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
+		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
+		--build-arg VCS_REF_ARG="${GIT_HASH}" \
+		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
 		--target ${_BUILD_ARGS_TARGET} \
 		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
 
@@ -63,3 +95,9 @@ _tester-%:
 
 _tester:
 	@bats test/tests.bats
+
+Dockerfile: # generate Dockerfile
+	@$(MAKE) -s _dockerfile
+
+_dockerfile: $(LIB)/*.m4
+	m4 -I $(LIB) $(LIB)/$(DOCKERFILE) > $(DOCKERFILE:.in=)
