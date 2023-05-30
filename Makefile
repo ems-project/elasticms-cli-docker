@@ -20,11 +20,14 @@ TIKA_VERSION ?= 2.7.0
 # Default Docker image name (if no .build.env file provided)
 DOCKER_IMAGE_NAME ?= docker.io/elasticms/cli
 
+CONTAINER_ENGINE ?= docker
+CONTAINER_TARGET_IMAGE_FORMAT ?= docker
+
 _BUILD_ARGS_TARGET ?= prd
 _BUILD_ARGS_TAG ?= latest
 
 .DEFAULT_GOAL := help
-.PHONY: help build build-dev build-all buildah buildah-dev buildah-all test test-dev test-all Dockerfile
+.PHONY: help build build-dev build-all test test-dev test-all Dockerfile
 
 help: # Show help for each of the Makefile recipes.
 	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
@@ -39,45 +42,34 @@ build-all: # Build [elasticms-cli] [prd,dev] variant Docker images
 	@$(MAKE) -s _build-prd
 	@$(MAKE) -s _build-dev
 
-buildah: # Build [elasticms-cli] [prd] variant Docker images
-	@$(MAKE) -s _buildah-prd
-
-buildah-dev: # Build [elasticms-cli] [dev] variant Docker images
-	@$(MAKE) -s _buildah-dev
-
-buildah-all: # Build [elasticms-cli] [prd,dev] variant Docker images
-	@$(MAKE) -s _buildah-prd
-	@$(MAKE) -s _buildah-dev
-
 _build-%: 
 	@$(MAKE) -s _builder \
 		-e _BUILD_ARGS_TAG="${ELASTICMS_CLI_VERSION}-$*" \
 		-e _BUILD_ARGS_TARGET="$*"
 
-_buildah-%: 
-	@$(MAKE) -s _buildaher \
-		-e _BUILD_ARGS_TAG="${ELASTICMS_CLI_VERSION}-$*" \
-		-e _BUILD_ARGS_TARGET="$*"
-
 _builder: _dockerfile
-	@docker build --progress=plain --no-cache \
-		--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
-		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
-		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
-		--build-arg VCS_REF_ARG="${GIT_HASH}" \
-		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
-		--target ${_BUILD_ARGS_TARGET} \
-		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
-
-_buildaher: _dockerfile
-	@buildah bud --no-cache --pull-always --force-rm --squash \
-		--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
-		--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
-		--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
-		--build-arg VCS_REF_ARG="${GIT_HASH}" \
-		--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
-		--target ${_BUILD_ARGS_TARGET} \
-		--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
+    ifeq ($(CONTAINER_ENGINE),podman)
+		@echo "Building $(CONTAINER_TARGET_IMAGE_FORMAT) image format with buildah"
+		@buildah bud --no-cache --pull-always --force-rm --squash \
+			--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
+			--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
+			--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
+			--build-arg VCS_REF_ARG="${GIT_HASH}" \
+			--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
+			--format ${CONTAINER_TARGET_IMAGE_FORMAT} \
+			--target ${_BUILD_ARGS_TARGET} \
+			--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
+    else
+		@echo "Building $(CONTAINER_TARGET_IMAGE_FORMAT) image format with docker"
+		@docker build --no-cache --force-rm --progress=plain \
+			--build-arg VERSION_ARG="${ELASTICMS_CLI_VERSION}" \
+			--build-arg RELEASE_ARG="${_BUILD_ARGS_TAG}" \
+			--build-arg BUILD_DATE_ARG="${BUILD_DATE}" \
+			--build-arg VCS_REF_ARG="${GIT_HASH}" \
+			--build-arg TIKA_VERSION_ARG="${TIKA_VERSION}" \
+			--target ${_BUILD_ARGS_TARGET} \
+			--tag ${DOCKER_IMAGE_NAME}:${_BUILD_ARGS_TAG} .
+    endif
 
 test: # Test [elasticms-cli] [prd] variant Docker images
 	@$(MAKE) -s _tester-prd
@@ -90,8 +82,11 @@ test-all: # Test [elasticms-cli] [prd,dev] variant Docker images
 	@$(MAKE) -s _tester-dev
 
 _tester-%: 
+	@echo "Test image with $(CONTAINER_ENGINE) container engine"
 	@$(MAKE) -s _tester \
-		-e DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}:${ELASTICMS_CLI_VERSION}-$*"
+		-e DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}:${ELASTICMS_CLI_VERSION}-$*" \
+		-e EMS_VERSION="${ELASTICMS_CLI_VERSION}" \
+		-e CONTAINER_ENGINE="${CONTAINER_ENGINE}"
 
 _tester:
 	@bats test/tests.bats
@@ -100,4 +95,4 @@ Dockerfile: # generate Dockerfile
 	@$(MAKE) -s _dockerfile
 
 _dockerfile: $(LIB)/*.m4
-	m4 -I $(LIB) $(LIB)/$(DOCKERFILE) > $(DOCKERFILE:.in=)
+	sed -e 's/# include(\(.*\))/include(\1)/g' $(LIB)/$(DOCKERFILE) | m4 -I $(LIB) > $(DOCKERFILE:.in=)
