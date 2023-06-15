@@ -16,7 +16,9 @@ USER root
 
 COPY --from=builder --chmod=775 --chown=1001:0 /opt/src/elasticms /opt/src/elasticms
 COPY --from=builder --chmod=775 --chown=1001:0 /opt/bin/tika-app.jar /opt/bin/tika-app.jar
-COPY --chmod=775 --chown=1001:0  bin/ /usr/local/bin/
+
+COPY --chmod=775 --chown=1001:0 bin/ /usr/local/bin/
+COPY --chmod=770 --chown=1001:0 etc/ /usr/local/etc/
 
 RUN echo "Install required runtime ..." \
     && apk add --update --no-cache tini \
@@ -31,15 +33,30 @@ RUN echo "Install required runtime ..." \
       msttcorefonts-installer \
       ttf-dejavu \
       fontconfig \
+      supervisor \
+      supercronic \
     && echo "Configure container ..." \
     && update-ms-fonts \
     && fc-cache -f -v \
+    && rm /etc/supervisord.conf /etc/crontabs/root \
+    && mkdir -p /etc/supervisord/supervisord.d \
+    && touch /var/log/supervisord.log /var/run/supervisord.pid \
     && mkdir -p /home/default/Downloads /app \
-    && chown -R 1001:0 /opt/src/elasticms /home/default/Downloads /app \
-    && chmod -R ug+rw /opt/src/elasticms /home/default/Downloads /app \
-    && find /opt/src/elasticms -type d -exec chmod ug+x {} \; \
-    && chmod +x /usr/local/bin/container-entrypoint \
-                /usr/local/bin/elasticms
+    && chown -R 1001:0 /opt/src/elasticms \
+                       /home/default/Downloads \
+                       /app \
+                       /etc/crontabs \
+                       /etc/supervisord \
+                       /var/log/supervisord.log \
+                       /var/run/supervisord.pid \
+    && chmod -R ug+rw /opt/src/elasticms \
+                      /home/default/Downloads \
+                      /app \
+                      /etc/crontabs \
+                      /etc/supervisord \
+                      /var/log/supervisord.log \
+                      /var/run/supervisord.pid \
+    && find /opt/src/elasticms -type d -exec chmod ug+x {} \;
 
 WORKDIR /opt/src/elasticms
 
