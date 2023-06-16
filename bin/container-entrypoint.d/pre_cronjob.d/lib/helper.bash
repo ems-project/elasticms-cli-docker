@@ -25,14 +25,8 @@ function elasticms-command () {
 
   local -r ELASTICMS_COMMAND=$1
 
-  if [ -z "${DB_HOST+x}" ] || [ -z "${DB_PORT+x}" ] ; then
-    logLast "Please provide required environment variables for elasticms ${ELASTICMS_COMMAND} (DB_HOST, DB_PORT)..."
-    return -1
-  fi
-
   logLast "> ELASTICMS_CLI_VERSION: ${ELASTICMS_CLI_VERSION}"
-  logLast "> DB_HOST: ${DB_HOST}"
-  logLast "> DB_PORT: ${DB_PORT}"
+  logLast "> ELASTICMS_COMMAND: ${ELASTICMS_COMMAND}"
   logLast "--------------------------------------"
 
   healthcheck /start
