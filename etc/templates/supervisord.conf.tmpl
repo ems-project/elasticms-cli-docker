@@ -7,5 +7,26 @@ stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
 
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+{{ if ne .Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_PATH "" }}
+
+[unix_http_server]
+file = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_PATH}}
+chmod = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_CHMOD}}
+chown = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_CHOWN}}
+
+{{ end }}
+
+{{ if ne .Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_HOST "" }}
+
+[inet_http_server]
+port = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_HOST}}:{{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_PORT}}
+username = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_USERNAME}}
+password = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_PASSWORD}}
+
+{{ end }}
+
 [include]
 files = /etc/supervisord/supervisord.d/*.ini

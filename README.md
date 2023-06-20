@@ -142,4 +142,42 @@ This variant contains the [ElasticMS CLI tool](https://github.com/ems-project/el
 
 ```
 docker run -it --rm docker.io/elasticms/cli:<version> <elasticms-command>
+
+docker run -it --rm -e TZ=Europe/Brussels \
+                    -e ELASTICMS_CLI_CROND_SCHEDULE="*/1 * * * *" \
+                    docker.io/elasticms/cli:<version> cron ems:version
+
+docker run -it --rm -e ELASTICMS_CLI_CROND_SCHEDULE="*/1 * * * *" \
+                    docker.io/elasticms/cli:<version> cron ems:version
+
+docker run -it --rm -e TZ=Europe/Brussels \
+                    -e ELASTICMS_CLI_CROND_SCHEDULE="*/1 * * * *" \
+                    -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_HOST=0.0.0.0 \
+                    -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_PORT=9746 \
+                    docker.io/elasticms/cli:<version> cron ems:version
+
+docker run -it --rm -v -p 9746:9746 \
+                       -p 9744:9744 \
+                       -e TZ=Europe/Brussels \
+                       -e ELASTICMS_CLI_CROND_SCHEDULE="*/1 * * * *" \
+                       -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_HOST=0.0.0.0 \
+                       -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_PORT=9746 \
+                       -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_HOST=0.0.0.0 \
+                       -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_PORT=9744 \
+                       --name cron \
+                       docker.io/elasticms/cli:<version> cron ems:version
+
+docker run -it --rm -p 9746:9746 \
+                    -p 9744:9744 \
+                    -e TZ=Europe/Brussels \
+                    -e ELASTICMS_CLI_CROND_SCHEDULE="*/1 * * * *" \
+                    -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_HOST=0.0.0.0 \
+                    -e ELASTICMS_CLI_SUPERCRONIC_PROMETHEUS_LISTEN_PORT=9746 \
+                    -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_HOST=0.0.0.0 \
+                    -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_PORT=9744 \
+                    -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_PATH=/tmp/supervisor/supervisor.sock \
+                    -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_CHMOD=0700 \
+                    -e ELASTICMS_CLI_SUPERVISOR_XMLRPC_UNIX_SOCKET_CHOWN=1001:0 \
+                    --name cron \
+                    docker.io/elasticms/cli:<version> cron ems:version
 ```

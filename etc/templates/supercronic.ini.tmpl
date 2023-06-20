@@ -1,5 +1,5 @@
 [program:supercronic]
-command=/usr/bin/supercronic /etc/crontabs/elasticms
+command=/usr/bin/supercronic {{.Env.ELASTICMS_CLI_SUPERCRONIC_COMMAND_FLAGS}} /etc/crontabs/elasticms
 stdout_logfile=/dev/stdout
 stderr_logfile=/dev/stderr
 stdout_logfile_maxbytes=0
