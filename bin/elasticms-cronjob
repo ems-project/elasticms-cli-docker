@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+export DEBUG=${DEBUG:-false}
+export ELASTICMS_CLI_PRE_CRONJOB_PATH="${ELASTICMS_CLI_PRE_CRONJOB_PATH:-/usr/local/bin/container-entrypoint.d/pre_cronjob.d}"
+export ELASTICMS_CLI_POST_CRONJOB_PATH="${ELASTICMS_CLI_POST_CRONJOB_PATH:-/usr/local/bin/container-entrypoint.d/post_cronjob.d}"
+
+[[ "${DEBUG}" == "true" ]] && set -x
+
+if [[ -d "${ELASTICMS_CLI_PRE_CRONJOB_PATH}" ]]
+then
+  for FILE in $(find ${ELASTICMS_CLI_PRE_CRONJOB_PATH} -iname \*.sh | sort)
+  do
+    source ${FILE}
+  done
+fi
+
+elasticms-command "$1"
+
+if [[ -d "${ELASTICMS_CLI_POST_CRONJOB_PATH}" ]]
+then
+  for FILE in $(find ${ELASTICMS_CLI_POST_CRONJOB_PATH} -iname \*.sh | sort)
+  do
+    source ${FILE}
+  done
+fi

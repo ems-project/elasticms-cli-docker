@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+export DEBUG=${DEBUG:-false}
+[[ "${DEBUG}" == "true" ]] && set -x
+
+echo -e "\n    Configure ElasticMS CLI Container ...\n"
+
+export ELASTICMS_CLI_CROND_COMMAND="$@"
+
+for FILE in $(find /usr/local/bin/container-entrypoint.d/entrypoint.d -iname \*.sh | sort)
+do
+  source ${FILE}
+done
+
+for FILE in $(find /usr/local/bin/container-entrypoint.d/elasticms.d -iname \*.sh | sort)
+do
+  source ${FILE}
+done
+
+echo -e "\n    ElasticMS CLI Container configured succesfully ...\n"
+
+exec /usr/bin/supervisord -c /etc/supervisord/supervisord.conf
