@@ -15,7 +15,7 @@ then
   done
 fi
 
-elasticms-command "$1"
+elasticms-command "$@"
 
 if [[ -d "${ELASTICMS_CLI_POST_CRONJOB_PATH}" ]]
 then

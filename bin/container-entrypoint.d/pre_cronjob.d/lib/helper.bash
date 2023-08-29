@@ -23,7 +23,7 @@ function healthcheck () {
 
 function elasticms-command () {
 
-  local -r ELASTICMS_COMMAND=$1
+  local -r ELASTICMS_COMMAND="$@"
 
   logLast "> ELASTICMS_CLI_VERSION: ${ELASTICMS_CLI_VERSION}"
   logLast "> ELASTICMS_COMMAND: ${ELASTICMS_COMMAND}"
@@ -31,7 +31,7 @@ function elasticms-command () {
 
   healthcheck /start
 
-  exec /usr/local/bin/elasticms "${ELASTICMS_COMMAND}" 2>&1 | tee -a "${ELASTICMS_CLI_LOG_TMP_FILE}"
+  exec /usr/local/bin/elasticms ${ELASTICMS_COMMAND} 2>&1 | tee -a "${ELASTICMS_CLI_LOG_TMP_FILE}"
 
   if [[ $? == 0 ]]; then
       healthcheck
