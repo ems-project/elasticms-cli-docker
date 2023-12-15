@@ -133,7 +133,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Download "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}" Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.image-variant }}
           path: /tmp
@@ -192,7 +192,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Download "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}" Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.image-variant }}
           path: /tmp
@@ -264,7 +264,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Download "${{ needs.init.outputs.docker-image-name }}:${{ needs.init.outputs.github-ci-sha-short }}-${{ matrix.image-variant }}" Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.image-variant }}
           path: /tmp
