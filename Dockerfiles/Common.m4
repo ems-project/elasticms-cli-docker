@@ -28,7 +28,7 @@ RUN echo "Install required runtime ..." \
       harfbuzz \
       ca-certificates \
       ttf-freefont \
-      openjdk13-jre \
+      openjdk17-jre \
       tesseract-ocr \
       msttcorefonts-installer \
       ttf-dejavu \
