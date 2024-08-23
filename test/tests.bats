@@ -12,7 +12,7 @@ export BATS_TIKA_VERSION="${TIKA_VERSION:-2.7.0}"
 export BATS_DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME:-docker.io/elasticms/cli:rc}"
 
 export BATS_CONTAINER_ENGINE="${CONTAINER_ENGINE:-podman}"
-export BATS_CONTAINER_COMPOSE_ENGINE="${BATS_CONTAINER_ENGINE}-compose"
+export BATS_CONTAINER_COMPOSE_ENGINE="${BATS_CONTAINER_ENGINE} compose"
 export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 
 @test "[$TEST_FILE] Test ElasticMS Client version command" {
