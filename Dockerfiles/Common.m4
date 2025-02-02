@@ -14,8 +14,8 @@ LABEL be.fgov.elasticms.client.build-date=$BUILD_DATE_ARG \
 
 USER root
 
-COPY --from=builder --chmod=775 --chown=1001:0 /opt/src/elasticms /opt/src/elasticms
-COPY --from=builder --chmod=775 --chown=1001:0 /opt/bin/tika-app.jar /opt/bin/tika-app.jar
+COPY --from=builder --chmod=775 --chown=1001:0 /app/src/elasticms /app/src/elasticms
+COPY --from=builder --chmod=775 --chown=1001:0 /app/bin/tika-app.jar /app/bin/tika-app.jar
 
 COPY --chmod=775 --chown=1001:0 bin/ /usr/local/bin/
 COPY --chmod=770 --chown=1001:0 etc/ /usr/local/etc/
@@ -42,23 +42,23 @@ RUN echo "Install required runtime ..." \
     && mkdir -p /etc/supervisord/supervisord.d \
     && touch /var/log/supervisord.log /var/run/supervisord.pid \
     && mkdir -p /home/default/Downloads /app \
-    && chown -R 1001:0 /opt/src/elasticms \
+    && chown -R 1001:0 /app/src/elasticms \
                        /home/default/Downloads \
                        /app \
                        /etc/crontabs \
                        /etc/supervisord \
                        /var/log/supervisord.log \
                        /var/run/supervisord.pid \
-    && chmod -R ug+rw /opt/src/elasticms \
+    && chmod -R ug+rw /app/src/elasticms \
                       /home/default/Downloads \
                       /app \
                       /etc/crontabs \
                       /etc/supervisord \
                       /var/log/supervisord.log \
                       /var/run/supervisord.pid \
-    && find /opt/src/elasticms -type d -exec chmod ug+x {} \;
+    && find /app/src/elasticms -type d -exec chmod ug+x {} \;
 
-WORKDIR /opt/src/elasticms
+WORKDIR /app/src/elasticms
 
 USER 1001
 
