@@ -6,8 +6,8 @@ load "helpers/dataloaders"
 load "lib/batslib"
 load "lib/output"
 
-export BATS_ELASTICMS_CLI_VERSION="${EMS_VERSION:-5.1.2}"
-export BATS_TIKA_VERSION="${TIKA_VERSION:-2.7.0}"
+export BATS_ELASTICMS_CLI_VERSION="${EMS_VERSION:-6.0.0}"
+export BATS_TIKA_VERSION="${TIKA_VERSION:-2.9.2}"
 
 export BATS_DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME:-docker.io/elasticms/cli:rc}"
 
@@ -21,7 +21,7 @@ export BATS_CONTAINER_NETWORK_NAME="${CONTAINER_NETWORK_NAME:-docker_default}"
 }
 
 @test "[$TEST_FILE] Test Tika App version command" {
-  run ${BATS_CONTAINER_ENGINE} run --rm ${BATS_DOCKER_IMAGE_NAME} java -jar /opt/bin/tika-app.jar --version
+  run ${BATS_CONTAINER_ENGINE} run --rm ${BATS_DOCKER_IMAGE_NAME} java -jar /app/bin/tika-app.jar --version
   assert_output -l -r "^Apache Tika ${BATS_TIKA_VERSION}$"
 }
 

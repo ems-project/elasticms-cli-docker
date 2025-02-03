@@ -12,10 +12,10 @@ GIT_HASH ?= $(shell git log --format="%h" -n 1)
 BUILD_DATE ?= $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 # Default ElasticMS CLI version (if no .build.env file provided)
-ELASTICMS_CLI_VERSION ?= 5.0.0
+ELASTICMS_CLI_VERSION ?= 6.0.0
 
 # Default Tika App version (if no .build.env file provided)
-TIKA_VERSION ?= 2.7.0
+TIKA_VERSION ?= 2.9.2
 
 # Default Docker image name (if no .build.env file provided)
 DOCKER_IMAGE_NAME ?= docker.io/elasticms/cli
