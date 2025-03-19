@@ -31,3 +31,16 @@ RUN echo "Install Tika App ..." \
     && sh -c "[ -f /app/bin/tika-app-${TIKA_VERSION}.jar.asc ]" || exit 1 \
     && gpg --verify /app/bin/tika-app-${TIKA_VERSION}.jar.asc /app/bin/tika-app-${TIKA_VERSION}.jar \
     && cp /app/bin/tika-app-${TIKA_VERSION}.jar /app/bin/tika-app.jar
+
+# https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver16
+
+RUN echo "Install Microsoft ODBC Driver ..." \
+    && MSODBCSQL_DRIVER_URL="https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.9.1.1-1_amd64.apk" \
+    && MSODBCSQL_DRIVER_ASC_URL="https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_17.9.1.1-1_amd64.sig" \
+    && wget -t 10 --max-redirect 1 --retry-connrefused -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --import \
+    && wget -t 10 --max-redirect 1 --retry-connrefused $MSODBCSQL_DRIVER_URL -O /tmp/msodbcsql17.apk || rm /tmp/msodbcsql17.apk \
+    && sh -c "[ -f /tmp/msodbcsql17.apk ]" || exit 1 \
+    && wget -t 10 --max-redirect 1 --retry-connrefused $MSODBCSQL_DRIVER_ASC_URL -O /tmp/msodbcsql17.sig  || rm /tmp/msodbcsql17.sig \
+    && sh -c "[ -f /tmp/msodbcsql17.sig ]" || exit 1 \
+    && gpg --verify /tmp/msodbcsql17.sig /tmp/msodbcsql17.apk \
+    && cp /tmp/msodbcsql17.apk /app/bin/msodbcsql17.apk
