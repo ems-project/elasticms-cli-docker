@@ -17,11 +17,15 @@ USER root
 
 COPY --from=builder --chmod=775 --chown=1001:0 /app/src/elasticms /app/src/elasticms
 COPY --from=builder --chmod=775 --chown=1001:0 /app/bin/tika-app.jar /app/bin/tika-app.jar
+COPY --from=builder --chmod=775 --chown=1001:0 /app/bin/msodbcsql17.apk /app/bin/msodbcsql17.apk
 
 COPY --chmod=775 --chown=1001:0 bin/ /usr/local/bin/
 COPY --chmod=770 --chown=1001:0 etc/ /usr/local/etc/
 
-RUN apk add --update --no-cache --virtual .extra-php-ext-build-deps $PHPIZE_DEPS unixodbc-dev ; \
+RUN apk add --allow-untrusted /app/bin/msodbcsql17.apk ; \
+    rm /app/bin/msodbcsql17.apk ; \
+    \
+    apk add --update --no-cache --virtual .extra-php-ext-build-deps $PHPIZE_DEPS unixodbc-dev ; \
     docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC ; \
     docker-php-ext-install -j "$(nproc)" pdo_odbc ; \
     pecl install sqlsrv-${PHP_EXT_SQLSRV_VERSION} ; \
@@ -53,6 +57,7 @@ RUN apk add --update --no-cache --virtual .extra-php-ext-build-deps $PHPIZE_DEPS
                                 supercronic ; \
     update-ms-fonts ; \
     fc-cache -f -v ; \
+    \
     rm /etc/supervisord.conf /etc/crontabs/root ; \
     mkdir -p /etc/supervisord/supervisord.d ; \
     touch /var/log/supervisord.log /var/run/supervisord.pid ; \
