@@ -2,25 +2,17 @@
 set -eo pipefail
 
 export DEBUG=${DEBUG:-false}
-export ELASTICMS_CLI_PRE_CRONJOB_PATH="${ELASTICMS_CLI_PRE_CRONJOB_PATH:-/usr/local/bin/container-entrypoint.d/pre_cronjob.d}"
-export ELASTICMS_CLI_POST_CRONJOB_PATH="${ELASTICMS_CLI_POST_CRONJOB_PATH:-/usr/local/bin/container-entrypoint.d/post_cronjob.d}"
-
 [[ "${DEBUG}" == "true" ]] && set -x
 
-if [[ -d "${ELASTICMS_CLI_PRE_CRONJOB_PATH}" ]]
-then
-  for FILE in $(find ${ELASTICMS_CLI_PRE_CRONJOB_PATH} -iname \*.sh | sort)
-  do
-    source ${FILE}
-  done
-fi
+echo -e "\n    Configure ElasticMS CLI Container ( Cronjob ) ...\n"
 
-elasticms-command "$@"
+export ELASTICMS_CLI_JOB_COMMAND="$@"
 
-if [[ -d "${ELASTICMS_CLI_POST_CRONJOB_PATH}" ]]
-then
-  for FILE in $(find ${ELASTICMS_CLI_POST_CRONJOB_PATH} -iname \*.sh | sort)
-  do
-    source ${FILE}
-  done
-fi
+for FILE in $(find /usr/local/bin/container-entrypoint.d/entrypoint.d -iname \*.sh | sort)
+do
+  source ${FILE}
+done
+
+echo -e "\n    ElasticMS CLI Container configured succesfully ...\n"
+
+exec elasticms-job "${ELASTICMS_CLI_JOB_COMMAND}"
