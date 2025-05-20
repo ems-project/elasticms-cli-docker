@@ -2,8 +2,9 @@
 
 echo "    - Configure Supervisord ..."
 
-gomplate \
-  -f /usr/local/etc/templates/supervisord.conf.tmpl \
-  -o /etc/supervisord/supervisord.conf
+OUTDIR="/app/etc"
+mkdir -p $OUTDIR
+
+apply-template /app/config/supervisord.conf.tmpl /app/etc/supervisord.conf
 
 true

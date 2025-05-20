@@ -8,7 +8,7 @@ echo -e "\n    Configure ElasticMS CLI Container ( Cronjob ) ...\n"
 
 export ELASTICMS_CLI_JOB_COMMAND="$@"
 
-for FILE in $(find /usr/local/bin/container-entrypoint.d/entrypoint.d -iname \*.sh | sort)
+for FILE in $(find /app/bin/container-entrypoint.d/entrypoint.d -iname \*.sh | sort)
 do
   source ${FILE}
 done

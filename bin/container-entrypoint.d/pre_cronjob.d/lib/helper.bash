@@ -31,7 +31,7 @@ function elasticms-command () {
 
   healthcheck /start
 
-  exec /usr/local/bin/elasticms ${ELASTICMS_COMMAND} 2>&1 | tee -a "${ELASTICMS_CLI_LOG_TMP_FILE}"
+  exec /app/bin/elasticms ${ELASTICMS_COMMAND} 2>&1 | tee -a "${ELASTICMS_CLI_LOG_TMP_FILE}"
 
   if [[ $? == 0 ]]; then
       healthcheck
