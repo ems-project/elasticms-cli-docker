@@ -4,8 +4,6 @@ set -eo pipefail
 export DEBUG=${DEBUG:-false}
 [[ "${DEBUG}" == "true" ]] && set -x
 
-echo -e "\n    Configure ElasticMS CLI Container ( Crontab )...\n"
-
 export ELASTICMS_CLI_CROND_COMMAND="$@"
 
 for FILE in $(find /app/bin/container-entrypoint.d/entrypoint.d -iname \*.sh | sort)
@@ -18,6 +16,6 @@ do
   source ${FILE}
 done
 
-echo -e "\n    ElasticMS CLI Container configured succesfully ...\n"
+log "INFO" "| ElasticMS CLI Container ( Crontab ) configured succesfully"
 
 exec /usr/bin/supervisord -c /app/etc/supervisord.conf
