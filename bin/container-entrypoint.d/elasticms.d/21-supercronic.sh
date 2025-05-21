@@ -3,7 +3,7 @@
 OUTDIR="/app/etc/crontabs /app/etc/supervisor.d"
 mkdir -p $OUTDIR
 
-echo "    - Writing Supercronic crontab file..."
+log "INFO" "| Configure Supercronic"
 
 if [[ -f /app/etc/crontabs/elasticms ]]
 then
@@ -11,16 +11,15 @@ then
   if rm /app/etc/crontabs/elasticms; then  
     apply-template /app/config/elasticms.crontab.tmpl /app/etc/crontabs/elasticms
   else
-    echo "    - Supercronic crontab file exists and will be used ..."
+    log "WARN" "| Supercronic crontab file exists and will be used"
   fi
 
 else
 
+  log "INFO" "| Writing Supercronic crontab file"
   apply-template /app/config/elasticms.crontab.tmpl /app/etc/crontabs/elasticms
 
 fi
-
-echo "    - Configure Supervisord for Supercronic usage..."
 
 if [[ -f /app/etc/supervisor.d/supercronic.ini ]]
 then
@@ -28,11 +27,12 @@ then
   if rm /app/etc/supervisor.d/supercronic.ini; then  
     apply-template /app/config/supercronic.ini.tmpl /app/etc/supervisor.d/supercronic.ini
   else
-    echo "    - Supervisord config file exists and will be used ..."
+    log "WARN" "| Supervisor config file exists and will be used"
   fi
 
 else
 
+  log "INFO" "| Writing Supervisor config file for Supercronic usage"
   apply-template /app/config/supercronic.ini.tmpl /app/etc/supervisor.d/supercronic.ini
 
 fi
