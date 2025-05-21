@@ -6,10 +6,13 @@ export DEBUG=${DEBUG:-false}
 
 # first arg is a symfony cmd (fe. `ems:version`)
 if [[ $1 =~ ^([A-z0-9\-]+:){1,}([A-z0-9\-]+)$ ]]; then
-	set -- elasticms "$@"
-elif [[ $1 = cron ]]; then
-    shift
-	set -- elasticms-crontab "$@"
+    set -- elasticms "$@"
+elif [[ $1 = crontab ]]; then
+  shift
+    set -- elasticms-crontab "$@"
+elif [[ $1 = cronjob ]]; then
+  shift
+    set -- elasticms-cronjob "$@"
 fi
 
 exec "$@"

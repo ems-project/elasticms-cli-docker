@@ -1,6 +1,8 @@
-ENV PHP_EXT_SQLSRV_VERSION=${PHP_EXT_SQLSRV_VERSION:-5.12.0} \
+ENV PHP_EXT_SQLSRV_VERSION=${PHP_EXT_SQLSRV_VERSION_ARG:-5.12.0} \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    TMPDIR=/app/tmp \
+    PATH=/app/bin:/app/sbin:$PATH
 
 LABEL be.fgov.elasticms.client.build-date=$BUILD_DATE_ARG \
       be.fgov.elasticms.client.name="elasticms-cli" \
@@ -15,14 +17,21 @@ LABEL be.fgov.elasticms.client.build-date=$BUILD_DATE_ARG \
 
 USER root
 
+COPY --chmod=775 --chown=1001:0 bin/ /app/bin/
+COPY --chmod=664 --chown=1001:0 config/ /app/config/
+
 COPY --from=builder --chmod=775 --chown=1001:0 /app/src/elasticms /app/src/elasticms
 COPY --from=builder --chmod=775 --chown=1001:0 /app/bin/tika-app.jar /app/bin/tika-app.jar
 COPY --from=builder --chmod=775 --chown=1001:0 /app/bin/msodbcsql17.apk /app/bin/msodbcsql17.apk
 
-COPY --chmod=775 --chown=1001:0 bin/ /usr/local/bin/
-COPY --chmod=770 --chown=1001:0 etc/ /usr/local/etc/
-
-RUN apk add --allow-untrusted /app/bin/msodbcsql17.apk ; \
+RUN mkdir -p /home/default \
+             /app/var/lock \
+             /app/var/log \
+             /app/var/run \
+             /app/src \
+             /app/tmp \
+             /app/sbin ; \
+    apk add --allow-untrusted /app/bin/msodbcsql17.apk ; \
     rm /app/bin/msodbcsql17.apk ; \
     \
     apk add --update --no-cache --virtual .extra-php-ext-build-deps $PHPIZE_DEPS unixodbc-dev ; \
@@ -58,30 +67,24 @@ RUN apk add --allow-untrusted /app/bin/msodbcsql17.apk ; \
     update-ms-fonts ; \
     fc-cache -f -v ; \
     \
-    rm /etc/supervisord.conf /etc/crontabs/root ; \
-    mkdir -p /etc/supervisord/supervisord.d ; \
-    touch /var/log/supervisord.log /var/run/supervisord.pid ; \
-    mkdir -p /home/default/Downloads /app ; \
-    chown -R 1001:0 /app/src/elasticms \
-                    /home/default/Downloads \
+    mv /etc/supervisord.conf /etc/supervisord.conf.orig ; \
+    mkdir -p /app/etc/supervisor.d/ ; \
+    touch /app/var/log/supervisord.log /app/var/run/supervisord.pid ; \
+    mkdir -p /home/default/Downloads ; \
+    chown -R 1001:0 /home/default/Downloads \
                     /app \
-                    /etc/crontabs \
-                    /etc/supervisord \
-                    /var/log/supervisord.log \
-                    /var/run/supervisord.pid ; \
+                    /app/var/log/supervisord.log \
+                    /app/var/run/supervisord.pid ; \
     chmod -R ug+rw /app/src/elasticms \
                    /home/default/Downloads \
                    /app \
-                   /etc/crontabs \
-                   /etc/supervisord \
-                   /var/log/supervisord.log \
-                   /var/run/supervisord.pid ; \
-    find /app/src/elasticms -type d -exec chmod ug+x {} \; 
-
+                   /app/var/log/supervisord.log \
+                   /app/var/run/supervisord.pid 
+             
 WORKDIR /app/src/elasticms
 
 USER 1001
 
-ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/container-entrypoint"]
+ENTRYPOINT ["/sbin/tini", "--", "/app/bin/container-entrypoint"]
 
 CMD ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]

@@ -1,7 +1,7 @@
 [supervisord]
 nodaemon=true
-logfile=/var/log/supervisord.log 
-pidfile=/var/run/supervisord.pid
+logfile=/app/var/log/supervisord.log
+pidfile=/app/var/run/supervisord.pid
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
@@ -29,4 +29,4 @@ password = {{.Env.ELASTICMS_CLI_SUPERVISOR_XMLRPC_INET_PASSWORD}}
 {{ end }}
 
 [include]
-files = /etc/supervisord/supervisord.d/*.ini
+files = /app/etc/supervisor.d/*.ini
